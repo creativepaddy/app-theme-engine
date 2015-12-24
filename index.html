@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>App-theme-engine by afollestad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">App-theme-engine</h1>
+      <h2 class="project-tagline">An easy to use app-level theme engine for Android developers.</h2>
+      <a href="https://github.com/afollestad/app-theme-engine" class="btn">View on GitHub</a>
+      <a href="https://github.com/afollestad/app-theme-engine/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/afollestad/app-theme-engine/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="app-theme-engine-beta" class="anchor" href="#app-theme-engine-beta" aria-hidden="true"><span class="octicon octicon-link"></span></a>App Theme Engine (BETA)</h1>
+
+<p>App Theme Engine is a library that makes it easy for developers to implement a theme system in 
+their apps, similar to what's seen in <a href="https://play.google.com/store/apps/details?id=com.afollestad.cabinet">Cabinet</a> 
+and <a href="https://github.com/afollestad/impression">Impression</a>.</p>
+
+<p>Download the <a href="https://github.com/afollestad/app-theme-engine/raw/master/sample/Sample.apk">latest sample APK</a> to check it out! </p>
+
+<p><img src="https://raw.githubusercontent.com/afollestad/app-theme-engine/master/art/showcase.png" alt="Showcase"></p>
+
+<h1>
+<a id="when-to-not-use-this-library" class="anchor" href="#when-to-not-use-this-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>When To NOT Use This Library</h1>
+
+<p>If your app has two themes, a light theme and a dark theme, do not use this library to configure them. 
+Only use this library if you intend to give the user the ability to change the color of UI elements in your app.﻿</p>
+
+<hr>
+
+<h1>
+<a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table of Contents</h1>
+
+<ol>
+<li>
+<a href="https://github.com/afollestad/app-theme-engine#gradle-dependency">Gradle Dependency</a>
+
+<ol>
+<li><a href="https://github.com/afollestad/app-theme-engine#repository">Repository</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#dependency">Dependency</a></li>
+</ol>
+</li>
+<li>
+<a href="https://github.com/afollestad/app-theme-engine#config">Config</a>
+
+<ol>
+<li><a href="https://github.com/afollestad/app-theme-engine#modifiers">Modifiers</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#keys">Keys</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#default-configuration">Default Configuration</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#value-retrieval">Value Retrieval</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#customizers">Customizers</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#marking-as-changed">Marking as Changed</a></li>
+</ol>
+</li>
+<li>
+<a href="https://github.com/afollestad/app-theme-engine#applying">Applying</a>
+
+<ol>
+<li><a href="https://github.com/afollestad/app-theme-engine#ateactivity">ATEActivity</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#custom-activities-and-fragments">Custom Activities and Fragments</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#toolbars-menus-and-overflows">Toolbars, Menus and Overflows</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#lists-and-individual-views">Lists and Individual Views</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#navigation-drawers">Navigation Drawers</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#task-description-recents">Task Description (Recents)</a></li>
+</ol>
+</li>
+<li>
+<a href="https://github.com/afollestad/app-theme-engine#tags">Tags</a>
+
+<ol>
+<li>
+<a href="https://github.com/afollestad/app-theme-engine#background-colors">Background Colors</a> </li>
+<li><a href="https://github.com/afollestad/app-theme-engine#text-colors">Text Colors</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#text-link-colors">Text Link Colors</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#text-shadow-colors">Text Shadow Colors</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#tint-colors">Tint Colors</a></li>
+</ol>
+</li>
+<li><a href="https://github.com/afollestad/app-theme-engine#pre-made-views">Pre-made Views</a></li>
+</ol>
+
+<hr>
+
+<h1>
+<a id="gradle-dependency" class="anchor" href="#gradle-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gradle Dependency</h1>
+
+<p><a href="https://jitpack.io/#afollestad/app-theme-engine"> <img src="https://img.shields.io/github/release/afollestad/app-theme-engine.svg?label=jitpack" alt="JitPack"> </a>
+<a href="https://travis-ci.org/afollestad/app-theme-engine"><img src="https://travis-ci.org/afollestad/app-theme-engine.svg" alt="Build Status"></a>
+<a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square" alt="License"></a></p>
+
+<h4>
+<a id="repository" class="anchor" href="#repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Repository</h4>
+
+<p>Add this in your root <code>build.gradle</code> file (<strong>not</strong> your module <code>build.gradle</code> file):</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">allprojects</span> {
+    repositories {
+        <span class="pl-k">..</span>.
+        maven { url <span class="pl-s"><span class="pl-pds">"</span>https://jitpack.io<span class="pl-pds">"</span></span> }
+    }
+}</pre></div>
+
+<h4>
+<a id="dependency" class="anchor" href="#dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependency</h4>
+
+<p>Add this to your module's <code>build.gradle</code> file:</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
+    <span class="pl-k">..</span>.
+    compile(<span class="pl-s"><span class="pl-pds">'</span>com.github.afollestad:app-theme-engine:0.4.0@aar<span class="pl-pds">'</span></span>) {
+        transitive <span class="pl-k">=</span> <span class="pl-c1">true</span>
+    }
+}</pre></div>
+
+<hr>
+
+<h1>
+<a id="config" class="anchor" href="#config" aria-hidden="true"><span class="octicon octicon-link"></span></a>Config</h1>
+
+<p>By default, Android app themes are static. They cannot be changed dynamically after an APK is built. This 
+library allows you to dynamically change theme colors at runtime.</p>
+
+<p>All configuration options are persisted using SharedPreferences, meaning once you set them, you don't have 
+to set them again unless you want the value to be changed from what it was previously.</p>
+
+<h4>
+<a id="modifiers" class="anchor" href="#modifiers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifiers</h4>
+
+<p>Here are a few configuration methods that can be used:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-c">// 0 to disable, sets a default theme for all Activities which use this config key</span>
+<span class="pl-c1">ATE</span><span class="pl-k">.</span>config(<span class="pl-v">this</span>, <span class="pl-c1">null</span>) 
+    <span class="pl-c">// 0 to disable, sets a default theme for all Activities which use this config key</span>
+    .activityTheme(<span class="pl-smi">R</span><span class="pl-k">.</span>style<span class="pl-k">.</span>my_theme) 
+    .coloredActionBar(<span class="pl-c1">true</span>)
+    .primaryColor(color)
+    <span class="pl-c">// when true, primaryColorDark is auto generated from primaryColor</span>
+    .autoGeneratePrimaryDark(<span class="pl-c1">true</span>) 
+    .primaryColorDark(color)
+    .accentColor(color)
+    .coloredStatusBar(<span class="pl-c1">true</span>)
+    <span class="pl-c">// by default, is equal to primaryColorDark unless coloredStatusBar is false</span>
+    .statusBarColor(color)
+     <span class="pl-c">// dark status bar icons on Marshmallow (API 23)+</span>
+    .lightStatusBarMode(<span class="pl-smi">Config</span><span class="pl-c1"><span class="pl-k">.</span>LIGHT_STATUS_BAR_AUTO</span>)
+    .coloredNavigationBar(<span class="pl-c1">false</span>)
+    <span class="pl-c">// by default, is equal to primaryColor unless coloredNavigationBar is false</span>
+    .navigationBarColor(color)
+    .textColorPrimary(color)
+    .textColorPrimaryInverse(color)
+    .textColorSecondary(color)
+    .textColorSecondaryInverse(color)
+    <span class="pl-c">// enables or disables the next 4 values</span>
+    .navigationViewThemed(<span class="pl-c1">true</span>) 
+    .navigationViewSelectedIcon(color)
+    .navigationViewSelectedText(color)
+    .navigationViewNormalIcon(color)
+    .navigationViewNormalText(color)
+    <span class="pl-c">// activity, fragment, or view</span>
+    .apply(<span class="pl-v">this</span>);</pre></div>
+
+<p>There's also color resource and color attribute variations of the color modifiers. For an example: 
+rather than using <code>primaryColor(int)</code>, you could use <code>primaryColorRes(int)</code> or <code>primaryColorAttr(int)</code> 
+in order to pass a value in the format <code>R.color.resourceValue</code> or <code>R.attr.attributeValue</code>.</p>
+
+<h4>
+<a id="keys" class="anchor" href="#keys" aria-hidden="true"><span class="octicon octicon-link"></span></a>Keys</h4>
+
+<p>The second parameter of <code>ATE.config(Context, String)</code> was null above, because it's optional. You can instead 
+pass a String of any value as a key. This will allow you to keep separate configurations, which can be applied 
+to different Activities, Fragments, Views, at will. Passing null specifies to use the default. You could have 
+two Activities which store their own separate theme values independently, or you could have two configurations 
+for a light and dark theme.</p>
+
+<p>The <a href="https://github.com/afollestad/app-theme-engine#applying">Applying</a> section will go over this a bit more.</p>
+
+<h4>
+<a id="default-configuration" class="anchor" href="#default-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default Configuration</h4>
+
+<p>If you want to setup a default configuration the first time your app is run, you can use code like this:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">if</span> (<span class="pl-k">!</span><span class="pl-c1">ATE</span><span class="pl-k">.</span>config(<span class="pl-v">this</span>, <span class="pl-c1">null</span>)<span class="pl-k">.</span>isConfigured()) {
+    <span class="pl-c">// Setup default options for the default (null) key</span>
+}</pre></div>
+
+<p>Again, the second parameter is an optional key.</p>
+
+<h4>
+<a id="value-retrieval" class="anchor" href="#value-retrieval" aria-hidden="true"><span class="octicon octicon-link"></span></a>Value Retrieval</h4>
+
+<p>Using the <code>Config</code> class, you can retrieve your theme values (if you need to for any reason). For an example:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">int</span> primaryColor <span class="pl-k">=</span> <span class="pl-smi">Config</span><span class="pl-k">.</span>primaryColor(<span class="pl-v">this</span>, <span class="pl-c1">null</span>);</pre></div>
+
+<p>And yet again, the second parameter is an optional key.</p>
+
+<h4>
+<a id="customizers" class="anchor" href="#customizers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customizers</h4>
+
+<p>Customizers are interfaces your Activities can implement to specify theme values without saving them 
+in your Configuration (if you don't want to use separate keys for different screens).</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AppCompatActivity</span> 
+        <span class="pl-k">implements</span> <span class="pl-e">ATEActivityThemeCustomizer</span>, <span class="pl-e">ATEStatusBarCustomizer</span>, <span class="pl-e">ATETaskDescriptionCustomizer</span>, <span class="pl-e">ATENavigationBarCustomizer</span> {
+
+    <span class="pl-k">@StyleRes</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getActivityTheme</span>() {
+        <span class="pl-c">// Self explanatory. Can be used to override activityTheme() config value if set.</span>
+        <span class="pl-k">return</span> <span class="pl-smi">R</span><span class="pl-k">.</span>style<span class="pl-k">.</span>my_activity_theme;
+    }
+
+    <span class="pl-k">@ColorInt</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getStatusBarColor</span>() {
+        <span class="pl-c">// Normally the status bar is a darker version of the primary theme color</span>
+        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>RED</span>;
+    }
+
+    <span class="pl-k">@ColorInt</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getTaskDescriptionColor</span>() {
+        <span class="pl-c">// Task description is the color of your Activity's entry in Android's recents screen</span>
+        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>BLUE</span>;
+    }
+
+    <span class="pl-k">@ColorInt</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getNavigationBarColor</span>() {
+        <span class="pl-c">// Navigation bar is usually either black, or equal to the primary theme colro</span>
+        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>GREEN</span>;
+    }
+}</pre></div>
+
+<p>You can override some or all, to fit your needs. But again, you don't <em>need</em> to use these if you use keys for 
+different configurations.</p>
+
+<h4>
+<a id="marking-as-changed" class="anchor" href="#marking-as-changed" aria-hidden="true"><span class="octicon octicon-link"></span></a>Marking as Changed</h4>
+
+<p>In the sample project, you can switch between a light and dark theme. The preference that says whether or 
+not the dark theme is active is not part of ATE. The sample project tells MainActivity that it
+needs to restart on return from the Settings Screen when the dark theme has been toggled.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-c">// Second parameter is an optional Config key</span>
+<span class="pl-smi">Config</span><span class="pl-k">.</span>markChanged(<span class="pl-v">this</span>, <span class="pl-c1">null</span>);</pre></div>
+
+<p>This method tells all already running Activities that the configuration has been changed since they were 
+first opened, without having to edit other configuration values.</p>
+
+<p>You can mark multiple configuration keys as changed:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Config</span><span class="pl-k">.</span>markChanged(<span class="pl-v">this</span>, <span class="pl-s"><span class="pl-pds">"</span>light_theme<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>dark_theme<span class="pl-pds">"</span></span>);</pre></div>
+
+<hr>
+
+<h1>
+<a id="applying" class="anchor" href="#applying" aria-hidden="true"><span class="octicon octicon-link"></span></a>Applying</h1>
+
+<p>Once you have configurations set, you can apply the theme engine to Activities, Fragments, and even 
+individual views.</p>
+
+<h4>
+<a id="ateactivity" class="anchor" href="#ateactivity" aria-hidden="true"><span class="octicon octicon-link"></span></a>ATEActivity</h4>
+
+<p>As seen in the sample project, you can have all Activities in your app extends <code>ATEActivity</code>. This will do
+all the heavy lifting for you.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyActivity</span> <span class="pl-k">extends</span> <span class="pl-e">ATEActivity</span> {
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onCreate</span>(<span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+        setContentView(<span class="pl-smi">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>my_layout);
+    }
+}</pre></div>
+
+<p>If you were to leave the Activity, change theme values (e.g. in a Settings screen), and come back,
+the Activity would automatically recreate itself.</p>
+
+<p>You can also change theme values in real time within the Activity using the <code>ATE.apply()</code> or <code>Config#apply()</code> methods.</p>
+
+<hr>
+
+<p>The <a href="https://github.com/afollestad/app-theme-engine#config">Config</a> section emphasized the fact that you can
+use keys to separate different theme configurations. <code>ATEActivity</code> has an optional override method called 
+<code>getATEKey()</code> which can be used to specify a configuration to use in individual activities.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyActivity</span> <span class="pl-k">extends</span> <span class="pl-e">ATEActivity</span> {
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onCreate</span>(<span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+        setContentView(<span class="pl-smi">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>my_layout);
+    }
+
+    <span class="pl-k">@Nullable</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">protected</span> <span class="pl-smi">String</span> <span class="pl-en">getATEKey</span>() {
+        <span class="pl-k">return</span> getClass()<span class="pl-k">.</span>getName();
+    }
+}</pre></div>
+
+<p>The value returned here is used in many other areas too. For an example, there are two versions of almost every method. 
+One that accepts a config key, one that doesn't. <code>ATE.config(Context, String)</code> is a good example. If you were to use 
+ <code>ATE.config(Context)</code> and pass the above <code>Activity</code> as the <code>Context</code>, it would automatically use the return value 
+ of <code>getATEKey()</code> as the second parameter even though it wasn't directly specified.</p>
+
+<h4>
+<a id="custom-activities-and-fragments" class="anchor" href="#custom-activities-and-fragments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Activities and Fragments</h4>
+
+<p>If you don't use <code>ATEActivity</code>, there's a few things you have to do:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AppCompatActivity</span> {
+
+    <span class="pl-k">private</span> <span class="pl-k">long</span> updateTime <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-c1">1</span>;
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onCreate</span>(<span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+        <span class="pl-c">// Apply theming to status bar, nav bar, and task description (recents).</span>
+        <span class="pl-c">// Second parameter is optional config key.</span>
+        <span class="pl-c1">ATE</span><span class="pl-k">.</span>preApply(<span class="pl-v">this</span>, <span class="pl-c1">null</span>);
+        <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+
+        <span class="pl-c">// Always call BEFORE apply()</span>
+        setContentView(<span class="pl-smi">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>my_layout);
+
+        <span class="pl-c">// Store the time the engine was initially applied, so the Activity can restart when coming back after changes</span>
+        updateTime <span class="pl-k">=</span> <span class="pl-smi">System</span><span class="pl-k">.</span>currentTimeMillis();
+
+        <span class="pl-c">// Apply colors to other views in the Activity. Call after all initial view setup, including toolbars!</span>
+        <span class="pl-c">// Second parameter is optional config key.</span>
+        <span class="pl-c1">ATE</span><span class="pl-k">.</span>apply(<span class="pl-v">this</span>, <span class="pl-c1">null</span>);
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> <span class="pl-en">onResume</span>() {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onResume();
+        <span class="pl-c">// If values were applied/committed (from Config) since the Activity was created, recreate it now</span>
+        <span class="pl-c">// Third parameter is optional config key.</span>
+        <span class="pl-k">if</span> (<span class="pl-c1">ATE</span><span class="pl-k">.</span>didValuesChange(<span class="pl-v">this</span>, updateTime, <span class="pl-c1">null</span>))
+            recreate();
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">onCreateOptionsMenu</span>(<span class="pl-smi">Menu</span> <span class="pl-v">menu</span>) {
+        getMenuInflater()<span class="pl-k">.</span>inflate(<span class="pl-smi">R</span><span class="pl-k">.</span>menu<span class="pl-k">.</span>my_menu, menu);
+        <span class="pl-c1">ATE</span><span class="pl-k">.</span>applyMenu(<span class="pl-v">this</span>, getATEKey(), menu);
+        <span class="pl-k">return</span> <span class="pl-v">super</span><span class="pl-k">.</span>onCreateOptionsMenu(menu);
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">onMenuOpened</span>(<span class="pl-k">int</span> <span class="pl-v">featureId</span>, <span class="pl-smi">Menu</span> <span class="pl-v">menu</span>) {
+        <span class="pl-c1">ATE</span><span class="pl-k">.</span>applyOverflow(<span class="pl-v">this</span>, getATEKey());
+        <span class="pl-k">return</span> <span class="pl-v">super</span><span class="pl-k">.</span>onMenuOpened(featureId, menu);
+    }
+}</pre></div>
+
+<hr>
+
+<p>You can also apply theming to views in a Fragment:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyFragment</span> <span class="pl-k">extends</span> <span class="pl-e">Fragment</span> {
+
+    <span class="pl-c1">...</span>
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onViewCreated</span>(<span class="pl-smi">View</span> <span class="pl-v">view</span>, <span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onViewCreated(view, savedInstanceState);
+        <span class="pl-c1">ATE</span><span class="pl-k">.</span>apply(<span class="pl-v">this</span>, <span class="pl-c1">null</span>);
+    }
+}</pre></div>
+
+<hr>
+
+<p>And again, replace occurrences of <code>null</code> above with a key if you need separate configurations.</p>
+
+<h4>
+<a id="toolbars-menus-and-overflows" class="anchor" href="#toolbars-menus-and-overflows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbars, Menus, and Overflows</h4>
+
+<p>ATE will automatically theme your toolbars or support action bars.</p>
+
+<p><em>If the toolbar background is light</em>: the navigation icon (e.g. home up or drawer icon) will be tinted black,
+the title text color will be black, the menu icons will be tinted black, and the overflow button will be tinted black.</p>
+
+<p><em>If the toolbar background is dark</em>: the navigation icon (e.g. home up or drawer icon) will be tinted white,
+the title text color will be white, the menu icons will be tinted white, and the overflow button will be tinted white. </p>
+
+<hr>
+
+<p>ATE will also automatically theme widgets in your overflow menu, such as checkboxes and radio buttons.</p>
+
+<h4>
+<a id="lists-and-individual-views" class="anchor" href="#lists-and-individual-views" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lists and Individual Views</h4>
+
+<p>You theme individual views like this:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-c1">ATE</span><span class="pl-k">.</span>apply(view, <span class="pl-c1">null</span>);</pre></div>
+
+<p>The second parameter is an optional Config key.</p>
+
+<hr>
+
+<p>When working with lists, you have to apply the theme engine to each individual view in your adapter.</p>
+
+<p>For <em>RecyclerViews</em>:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">class</span> <span class="pl-en">MyAdapter</span> <span class="pl-k">extends</span> <span class="pl-e">RecyclerView</span>.<span class="pl-e">Adapter&lt;<span class="pl-smi">MyAdapter</span>.MyViewHolder</span>&gt; {
+
+    <span class="pl-k">public</span> <span class="pl-en">MyAdapter</span>() {
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">MyViewHolder</span> <span class="pl-en">onCreateViewHolder</span>(<span class="pl-smi">ViewGroup</span> <span class="pl-v">parent</span>, <span class="pl-k">int</span> <span class="pl-v">viewType</span>) {
+        <span class="pl-smi">View</span> list <span class="pl-k">=</span> <span class="pl-smi">LayoutInflater</span><span class="pl-k">.</span>from(parent<span class="pl-k">.</span>getContext())
+                .inflate(<span class="pl-smi">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>list_item, parent, <span class="pl-c1">false</span>);
+        <span class="pl-k">return</span> <span class="pl-k">new</span> <span class="pl-smi">MyViewHolder</span>(list);
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onBindViewHolder</span>(<span class="pl-smi">MyViewHolder</span> <span class="pl-v">holder</span>, <span class="pl-k">int</span> <span class="pl-v">position</span>) {
+        <span class="pl-c">// Setup views</span>
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getItemCount</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">20</span>;
+    }
+
+    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">class</span> <span class="pl-en">MyViewHolder</span> <span class="pl-k">extends</span> <span class="pl-e">RecyclerView</span>.<span class="pl-e">ViewHolder</span> {
+
+        <span class="pl-k">public</span> <span class="pl-en">MyViewHolder</span>(<span class="pl-smi">View</span> <span class="pl-v">itemView</span>) {
+            <span class="pl-v">super</span>(itemView);
+            <span class="pl-c">// It's recommended you only apply the theme the first time the holder is created.</span>
+            <span class="pl-c">// Second parameter is optional key.</span>
+            <span class="pl-c1">ATE</span><span class="pl-k">.</span>apply(itemView, <span class="pl-c1">null</span>);
+        }
+    }
+}</pre></div>
+
+<p>For <em>ListViews</em>:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">class</span> <span class="pl-en">MyAdapter</span> <span class="pl-k">extends</span> <span class="pl-e">BaseAdapter</span> {
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getCount</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">20</span>;
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">Object</span> <span class="pl-en">getItem</span>(<span class="pl-k">int</span> <span class="pl-v">position</span>) {
+        <span class="pl-k">return</span> <span class="pl-c1">null</span>;
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">long</span> <span class="pl-en">getItemId</span>(<span class="pl-k">int</span> <span class="pl-v">position</span>) {
+        <span class="pl-k">return</span> position;
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">View</span> <span class="pl-en">getView</span>(<span class="pl-k">int</span> <span class="pl-v">position</span>, <span class="pl-smi">View</span> <span class="pl-v">convertView</span>, <span class="pl-smi">ViewGroup</span> <span class="pl-v">parent</span>) {
+        <span class="pl-k">if</span> (convertView <span class="pl-k">==</span> <span class="pl-c1">null</span>) {
+            convertView <span class="pl-k">=</span> <span class="pl-smi">LayoutInflater</span><span class="pl-k">.</span>from(parent<span class="pl-k">.</span>getContext())
+                    .inflate(<span class="pl-smi">R</span><span class="pl-k">.</span>layout<span class="pl-k">.</span>list_item, parent, <span class="pl-c1">false</span>);
+            <span class="pl-c">// Only apply the first time the view is created.</span>
+            <span class="pl-c">// Second parameter is optional key.</span>
+            <span class="pl-c1">ATE</span><span class="pl-k">.</span>apply(convertView, <span class="pl-c1">null</span>);
+        }
+        <span class="pl-k">return</span> convertView;
+    }
+}</pre></div>
+
+<h4>
+<a id="navigation-drawers" class="anchor" href="#navigation-drawers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Navigation Drawers</h4>
+
+<p>ATE will automatically adapt when your Activity has a <code>DrawerLayout</code> at its root. When <code>coloredStatusBar()</code> 
+is set to true, the primary dark theme color will be applied to the <code>DrawerLayout</code> rather than directly to 
+the Window status bar. Thus, the status bar will be transparent when the drawer is open, and your theme
+color when it's closed. You don't have to manually do anything.</p>
+
+<p>If you use <code>NavigationView</code> from the design support library, ATE will by default theme it. There are 
+navigation view theming configuration methods discussed in the next section. If your drawer uses a <code>Fragment</code>
+or plain <code>ListView</code>/<code>RecyclerView</code>, you have to do what's discussed in the previous section.</p>
+
+<h4>
+<a id="task-description-recents" class="anchor" href="#task-description-recents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Task Description (Recents)</h4>
+
+<p>You don't have to do anything extra for this. Your app's Android recents (multi-tasking) entry will 
+be themed to your primary color automatically.</p>
+
+<p>There is however an <code>ATETaskDescriptionCustomizer</code> that's discussed in the <a href="https://github.com/afollestad/app-theme-engine#customizers">Customizers</a>
+ section.</p>
+
+<hr>
+
+<h1>
+<a id="tags" class="anchor" href="#tags" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tags</h1>
+
+<p>If you haven't used tags before, they can be applied to views directly from your XML layouts:</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">View</span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_width</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_height</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">tag</span>=<span class="pl-s"><span class="pl-pds">"</span>tag-value-here<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<p>The theme engine allows you to apply theme colors to any view using tags. <strong>You can even use multiple tags, separated by commas</strong>:</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">View</span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_width</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_height</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">tag</span>=<span class="pl-s"><span class="pl-pds">"</span>tag-one,tag-two,tag-three<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<p>Here's a list of available tag values:</p>
+
+<h4>
+<a id="background-colors" class="anchor" href="#background-colors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background Colors</h4>
+
+<p>You can change the background of any type of view.</p>
+
+<ol>
+<li>
+<code>bg_primary_color</code> - sets the background to the primary color.</li>
+<li>
+<code>bg_primary_color_dark</code> - sets the background to the primary dark color.</li>
+<li>
+<code>bg_accent_color</code> - sets the background to the accent color.</li>
+<li>
+<code>bg_text_primary</code> - sets the background to the primary text color.</li>
+<li>
+<code>bg_text_primary_inverse</code> - sets the background to the inverse primary text color.</li>
+<li>
+<code>bg_text_secondary</code> - sets the background to the secondary text color.</li>
+<li>
+<code>bg_text_secondary_inverse</code> - sets the background to the inverse secondary text color.</li>
+</ol>
+
+<h4>
+<a id="text-colors" class="anchor" href="#text-colors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text Colors</h4>
+
+<p>You can only change the text color of a view that extends <code>TextView</code>, which includes <code>Button</code>'s.</p>
+
+<ol>
+<li>
+<code>text_primary_color</code> - sets the text color to the primary color.</li>
+<li>
+<code>text_primary_color_dark</code> - sets the text color to the primary dark color.</li>
+<li>
+<code>text_accent_color</code> - sets the text color to the accent color.</li>
+<li>
+<code>text_primary</code> - sets the text color to the primary text color.</li>
+<li>
+<code>text_primary_inverse</code> - sets the text color to the inverse primary text color.</li>
+<li>
+<code>text_secondary</code> - sets the text color to the secondary text color.</li>
+<li>
+<code>text_secondary_inverse</code> - sets the text color to the inverse secondary text color.</li>
+</ol>
+
+<h4>
+<a id="text-link-colors" class="anchor" href="#text-link-colors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text Link Colors</h4>
+
+<p>This should only really be needed on <code>TextView'</code>s, it changes the color of links when TextViews are linkable.</p>
+
+<ol>
+<li>
+<code>text_link_primary_color</code> - sets the link text color to the primary color.</li>
+<li>
+<code>text_link_primary_color_dark</code> - sets the link text color to the primary dark color.</li>
+<li>
+<code>text_link_accent_color</code> - sets the link text color to the accent color.</li>
+<li>
+<code>text_link_primary</code> - sets the link text color to the primary text color.</li>
+<li>
+<code>text_link_primary_inverse</code> - sets the link text color to the inverse primary text color.</li>
+<li>
+<code>text_link_secondary</code> - sets the link text color to the secondary text color.</li>
+<li>
+<code>text_link_secondary_inverse</code> - sets the link text color to the inverse secondary text color.</li>
+</ol>
+
+<h4>
+<a id="text-shadow-colors" class="anchor" href="#text-shadow-colors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text Shadow Colors</h4>
+
+<p>This can be used on <code>TextView'</code>s, it changes the <code>shadowColor</code> value.</p>
+
+<ol>
+<li>
+<code>text_shadow_primary_color</code> - sets the link text color to the primary color.</li>
+<li>
+<code>text_shadow_primary_color_dark</code> - sets the link text color to the primary dark color.</li>
+<li>
+<code>text_shadow_accent_color</code> - sets the link text color to the accent color.</li>
+<li>
+<code>text_shadow_primary</code> - sets the link text color to the primary text color.</li>
+<li>
+<code>text_shadow_primary_inverse</code> - sets the link text color to the inverse primary text color.</li>
+<li>
+<code>text_shadow_secondary</code> - sets the link text color to the secondary text color.</li>
+<li>
+<code>text_shadow_secondary_inverse</code> - sets the link text color to the inverse secondary text color.</li>
+</ol>
+
+<h4>
+<a id="tint-colors" class="anchor" href="#tint-colors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tint Colors</h4>
+
+<p>You can tint <code>CheckBox</code>'s, <code>RadioButton</code>'s, <code>ProgressBar</code>'s, <code>EditText</code>'s, <code>SeekBar</code>'s, and <code>ImageView</code>'s. </p>
+
+<ol>
+<li>
+<code>tint_primary_color</code> - tints the view with the primary color.</li>
+<li>
+<code>tint_primary_color_dark</code> - tints the view with the primary dark color.</li>
+<li>
+<code>tint_accent_color</code> - tints the view with the accent color.</li>
+<li>
+<code>tint_text_primary</code> - tints the view with the primary text color.</li>
+<li>
+<code>tint_text_primary_inverse</code> - tints the view with the inverse primary text color.</li>
+<li>
+<code>tint_text_secondary</code> - tints the view with the secondary text color.</li>
+<li>
+<code>tint_text_secondary_inverse</code> - tints the view with the inverse secondary text color.</li>
+</ol>
+
+<hr>
+
+<p>Background tints work on any type of view:</p>
+
+<ol>
+<li>
+<code>bg_tint_primary_color</code> - tints the view background with the primary color.</li>
+<li>
+<code>bg_tint_primary_color_dark</code> - tints the view background with the primary dark color.</li>
+<li>
+<code>bg_tint_accent_color</code> - tints the view background with the accent color.</li>
+<li>
+<code>bg_tint_text_primary</code> - tints the view background with the primary text color.</li>
+<li>
+<code>bg_tint_text_primary_inverse</code> - tints the view background with the inverse primary text color.</li>
+<li>
+<code>bg_tint_text_secondary</code> - tints the view background with the secondary text color.</li>
+<li>
+<code>bg_tint_text_secondary_inverse</code> - tints the view background with the inverse secondary text color.</li>
+</ol>
+
+<hr>
+
+<p>You can even use background tint selectors:</p>
+
+<ol>
+<li>
+<code>bg_tint_primary_color_selector_lighter</code> - tints the view background with a primary color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_primary_color_dark_selector_lighter</code> - tints the view background with a primary dark color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_accent_color_selector_lighter</code> - tints the view background with a accent color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_text_primary_selector_lighter</code> - tints the view background with a primary text color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_text_secondary_selector_lighter</code> - tints the view background with a secondary text color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_primary_color_selector_darker</code> - tints the view background with a primary color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_primary_color_selector_darker</code> - tints the view background with a primary color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_primary_color_dark_selector_darker</code> - tints the view background with a primary dark color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_accent_color_selector_darker</code> - tints the view background with a accent color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_text_primary_selector_darker</code> - tints the view background with a primary text color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_text_primary_inverse_selector_darker</code> - tints the view background with a inverse primary text color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_text_secondary_selector_darker</code> - tints the view background with a secondary text color selector, which is lighter when pressed.</li>
+<li>
+<code>bg_tint_text_secondary_inverse_selector_darker</code> - tints the view background with a inverse secondary text color selector, which is lighter when pressed.</li>
+</ol>
+
+<hr>
+
+<h1>
+<a id="pre-made-views" class="anchor" href="#pre-made-views" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pre-made Views</h1>
+
+<p>Seven views come stock with this library:</p>
+
+<ol>
+<li>
+<code>ATECheckBox</code> - tints itself to the accent color.</li>
+<li>
+<code>ATERadioButton</code> - tints itself to the accent color.</li>
+<li>
+<code>ATEEditText</code> - tints itself to the accent color</li>
+<li>
+<code>ATEProgressBar</code> - tints itself to the accent color.</li>
+<li>
+<code>ATESeekBar</code> - tints itself to the accent color.</li>
+<li>
+<code>ATEPrimaryTextView</code> - sets its text color to the primary text color.</li>
+<li>
+<code>ATESecondaryTextView</code> - sets its text color to the secondary text color.</li>
+</ol>
+
+<p>All that they really do is set their own tag to one of the tag values in the previous section,
+and then apply theming to themselves using the individual view <code>apply()</code> method.</p>
+
+<hr>
+
+<p>If you use Config keys in your app, you may want to apply theme to these pre-made views:</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">com</span>.afollestad.appthemeengine.ATECheckBox
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_width</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_height</span>=<span class="pl-s"><span class="pl-pds">"</span>wrap_content<span class="pl-pds">"</span></span>
+    <span class="pl-e">app</span><span class="pl-e">:</span><span class="pl-e">ateKey_checkBox</span>=<span class="pl-s"><span class="pl-pds">"</span>your-config-key-here<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<p>All of the different views have a different suffix to <code>app:ateKey_</code>, since using the same attribute 
+name for all of them would result in duplicate errors.</p>
+
+<p>You can even use theme attributes in your Activity themes and reference them for this value (which is 
+done in the sample project since different keys are used for a light and dark theme).</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/afollestad/app-theme-engine">App-theme-engine</a> is maintained by <a href="https://github.com/afollestad">afollestad</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
