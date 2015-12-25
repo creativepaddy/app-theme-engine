@@ -68,9 +68,10 @@ Only use this library if you intend to give the user the ability to change the c
 
 <ol>
 <li><a href="https://github.com/afollestad/app-theme-engine#ateactivity">ATEActivity</a></li>
-<li><a href="https://github.com/afollestad/app-theme-engine#custom-activities-and-fragments">Custom Activities and Fragments</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#custom-activities">Custom Activities</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#fragments">Fragments</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#toolbars-menus-and-overflows">Toolbars, Menus and Overflows</a></li>
-<li><a href="https://github.com/afollestad/app-theme-engine#lists-and-individual-views">Lists and Individual Views</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#individual-views-and-lists">Individual Views and Lists</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#navigation-drawers">Navigation Drawers</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#task-description-recents">Task Description (Recents)</a></li>
 </ol>
@@ -120,7 +121,7 @@ Only use this library if you intend to give the user the ability to change the c
 
 <div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
     <span class="pl-k">..</span>.
-    compile(<span class="pl-s"><span class="pl-pds">'</span>com.github.afollestad:app-theme-engine:0.4.1@aar<span class="pl-pds">'</span></span>) {
+    compile(<span class="pl-s"><span class="pl-pds">'</span>com.github.afollestad:app-theme-engine:0.4.2@aar<span class="pl-pds">'</span></span>) {
         transitive <span class="pl-k">=</span> <span class="pl-c1">true</span>
     }
 }</pre></div>
@@ -334,7 +335,7 @@ One that accepts a config key, one that doesn't. <code>ATE.config(Context, Strin
  of <code>getATEKey()</code> as the second parameter even though it wasn't directly specified.</p>
 
 <h4>
-<a id="custom-activities-and-fragments" class="anchor" href="#custom-activities-and-fragments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Activities and Fragments</h4>
+<a id="custom-activities" class="anchor" href="#custom-activities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Activities</h4>
 
 <p>If you don't use <code>ATEActivity</code>, there's a few things you have to do:</p>
 
@@ -372,40 +373,39 @@ One that accepts a config key, one that doesn't. <code>ATE.config(Context, Strin
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">onCreateOptionsMenu</span>(<span class="pl-smi">Menu</span> <span class="pl-v">menu</span>) {
         getMenuInflater()<span class="pl-k">.</span>inflate(<span class="pl-smi">R</span><span class="pl-k">.</span>menu<span class="pl-k">.</span>my_menu, menu);
+        <span class="pl-c">// Applies tinting to menu icons and overflow button if necessary (if toolbar background is light colored)</span>
         <span class="pl-c1">ATE</span><span class="pl-k">.</span>applyMenu(<span class="pl-v">this</span>, getATEKey(), menu);
         <span class="pl-k">return</span> <span class="pl-v">super</span><span class="pl-k">.</span>onCreateOptionsMenu(menu);
     }
 
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">onMenuOpened</span>(<span class="pl-k">int</span> <span class="pl-v">featureId</span>, <span class="pl-smi">Menu</span> <span class="pl-v">menu</span>) {
+        <span class="pl-c">// Applies tinting to widgets (e.g. checkboxes) inside the overflow menu popup</span>
         <span class="pl-c1">ATE</span><span class="pl-k">.</span>applyOverflow(<span class="pl-v">this</span>, getATEKey());
         <span class="pl-k">return</span> <span class="pl-v">super</span><span class="pl-k">.</span>onMenuOpened(featureId, menu);
     }
 }</pre></div>
 
-<hr>
+<h4>
+<a id="fragments" class="anchor" href="#fragments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fragments</h4>
 
 <p>You can also apply theming to views in a Fragment:</p>
 
 <div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyFragment</span> <span class="pl-k">extends</span> <span class="pl-e">Fragment</span> {
 
-    <span class="pl-c1">...</span>
-
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onViewCreated</span>(<span class="pl-smi">View</span> <span class="pl-v">view</span>, <span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
         <span class="pl-v">super</span><span class="pl-k">.</span>onViewCreated(view, savedInstanceState);
+        <span class="pl-c">// Second parameter is optional config key.</span>
         <span class="pl-c1">ATE</span><span class="pl-k">.</span>apply(<span class="pl-v">this</span>, <span class="pl-c1">null</span>);
     }
 }</pre></div>
 
-<hr>
-
-<p>And again, replace occurrences of <code>null</code> above with a key if you need separate configurations.</p>
-
 <h4>
 <a id="toolbars-menus-and-overflows" class="anchor" href="#toolbars-menus-and-overflows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbars, Menus, and Overflows</h4>
 
-<p>ATE will automatically theme your toolbars or support action bars.</p>
+<p>ATE will automatically theme your toolbars or support action bars (if you use <code>ATEActivity</code> <em>or</em> follow
+the directions in <a href="https://github.com/afollestad/app-theme-engine#custom-activities">Custom Activities</a>). </p>
 
 <p><em>If the toolbar background is light</em>: the navigation icon (e.g. home up or drawer icon) will be tinted black,
 the title text color will be black, the menu icons will be tinted black, and the overflow button will be tinted black.</p>
@@ -413,12 +413,10 @@ the title text color will be black, the menu icons will be tinted black, and the
 <p><em>If the toolbar background is dark</em>: the navigation icon (e.g. home up or drawer icon) will be tinted white,
 the title text color will be white, the menu icons will be tinted white, and the overflow button will be tinted white. </p>
 
-<hr>
-
 <p>ATE will also automatically theme widgets in your overflow menu, such as checkboxes and radio buttons.</p>
 
 <h4>
-<a id="lists-and-individual-views" class="anchor" href="#lists-and-individual-views" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lists and Individual Views</h4>
+<a id="individual-views-and-lists" class="anchor" href="#individual-views-and-lists" aria-hidden="true"><span class="octicon octicon-link"></span></a>Individual Views and Lists</h4>
 
 <p>You theme individual views like this:</p>
 
