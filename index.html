@@ -39,6 +39,9 @@ Only use this library if you intend to give the user the ability to change the c
 
 <hr>
 
+<h4>
+<a id="this-document-will-be-updated-soon-some-of-the-content-is-outdated-some-of-the-content-is-for-the-next-release-it-wil-probably-be-re-written-mostly-see-the-sample-project-for-current-implementations" class="anchor" href="#this-document-will-be-updated-soon-some-of-the-content-is-outdated-some-of-the-content-is-for-the-next-release-it-wil-probably-be-re-written-mostly-see-the-sample-project-for-current-implementations" aria-hidden="true"><span class="octicon octicon-link"></span></a>This document will be updated soon, some of the content is outdated, some of the content is for the next release. It wil probably be re-written mostly. See the sample project for current implementations.</h4>
+
 <h1>
 <a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table of Contents</h1>
 
@@ -72,8 +75,9 @@ Only use this library if you intend to give the user the ability to change the c
 <li><a href="https://github.com/afollestad/app-theme-engine#fragments">Fragments</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#toolbars-menus-and-overflows">Toolbars, Menus and Overflows</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#individual-views-and-lists">Individual Views and Lists</a></li>
-<li><a href="https://github.com/afollestad/app-theme-engine#navigation-drawers">Navigation Drawers</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#drawerlayout-and-navigationviews">DrawerLayout and NavigationViews</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#task-description-recents">Task Description (Recents)</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#tablayouts">TabLayouts</a></li>
 </ol>
 </li>
 <li>
@@ -86,6 +90,7 @@ Only use this library if you intend to give the user the ability to change the c
 <li><a href="https://github.com/afollestad/app-theme-engine#text-link-colors">Text Link Colors</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#text-shadow-colors">Text Shadow Colors</a></li>
 <li><a href="https://github.com/afollestad/app-theme-engine#tint-colors">Tint Colors</a></li>
+<li><a href="https://github.com/afollestad/app-theme-engine#tablayouts-continued">TabLayouts - Continued</a></li>
 </ol>
 </li>
 <li><a href="https://github.com/afollestad/app-theme-engine#pre-made-views">Pre-made Views</a></li>
@@ -121,7 +126,7 @@ Only use this library if you intend to give the user the ability to change the c
 
 <div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
     <span class="pl-k">..</span>.
-    compile(<span class="pl-s"><span class="pl-pds">'</span>com.github.afollestad:app-theme-engine:0.4.2@aar<span class="pl-pds">'</span></span>) {
+    compile(<span class="pl-s"><span class="pl-pds">'</span>com.github.afollestad:app-theme-engine:0.5.0@aar<span class="pl-pds">'</span></span>) {
         transitive <span class="pl-k">=</span> <span class="pl-c1">true</span>
     }
 }</pre></div>
@@ -142,35 +147,53 @@ to set them again unless you want the value to be changed from what it was previ
 
 <p>Here are a few configuration methods that can be used:</p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">// 0 to disable, sets a default theme for all Activities which use this config key</span>
+<div class="highlight highlight-source-java"><pre><span class="pl-c">// Context and optional Config key as parameters to config()</span>
 <span class="pl-c1">ATE</span><span class="pl-k">.</span>config(<span class="pl-v">this</span>, <span class="pl-c1">null</span>) 
     <span class="pl-c">// 0 to disable, sets a default theme for all Activities which use this config key</span>
-    .activityTheme(<span class="pl-smi">R</span><span class="pl-k">.</span>style<span class="pl-k">.</span>my_theme) 
+    .activityTheme(<span class="pl-smi">R</span><span class="pl-k">.</span>style<span class="pl-k">.</span>my_theme)
+    <span class="pl-c">// true by default, colors support action bars and toolbars</span>
     .coloredActionBar(<span class="pl-c1">true</span>)
+    <span class="pl-c">// defaults to colorPrimary attribute value</span>
     .primaryColor(color)
     <span class="pl-c">// when true, primaryColorDark is auto generated from primaryColor</span>
     .autoGeneratePrimaryDark(<span class="pl-c1">true</span>) 
+    <span class="pl-c">// defaults to colorPrimaryDark attribute value</span>
     .primaryColorDark(color)
+    <span class="pl-c">// defaults to colorAccent attribute value</span>
     .accentColor(color)
-    .coloredStatusBar(<span class="pl-c1">true</span>)
-    <span class="pl-c">// by default, is equal to primaryColorDark unless coloredStatusBar is false</span>
+    <span class="pl-c">// by default, is equal to primaryColorDark's value</span>
     .statusBarColor(color)
-     <span class="pl-c">// dark status bar icons on Marshmallow (API 23)+</span>
+    <span class="pl-c">// true by default, setting to false disables coloring even if statusBarColor is set</span>
+    .coloredStatusBar(<span class="pl-c1">true</span>)
+    <span class="pl-c">// dark status bar icons on Marshmallow (API 23)+</span>
     .lightStatusBarMode(<span class="pl-smi">Config</span><span class="pl-c1"><span class="pl-k">.</span>LIGHT_STATUS_BAR_AUTO</span>)
-    .coloredNavigationBar(<span class="pl-c1">false</span>)
+    <span class="pl-c">// when on, makes the toolbar navigation icon, title, and menu icons black  </span>
+    lightToolbarMode(<span class="pl-smi">Config</span><span class="pl-c1"><span class="pl-k">.</span>LIGHT_TOOLBAR_AUTO</span>)
     <span class="pl-c">// by default, is equal to primaryColor unless coloredNavigationBar is false</span>
     .navigationBarColor(color)
+    <span class="pl-c">// false by default, setting to false disables coloring even if navigationBarColor is set</span>
+    .coloredNavigationBar(<span class="pl-c1">false</span>)
+    <span class="pl-c">// defaults to ?android:textColorPrimary attribute value</span>
     .textColorPrimary(color)
+    <span class="pl-c">// defaults to ?android:textColorPrimaryInverse attribute value</span>
     .textColorPrimaryInverse(color)
+    <span class="pl-c">// defaults to ?android:textColorSecondary attribute value</span>
     .textColorSecondary(color)
+    <span class="pl-c">// defaults to ?android:textColorSecondaryInverse attribute value</span>
     .textColorSecondaryInverse(color)
-    <span class="pl-c">// enables or disables the next 4 values</span>
+    <span class="pl-c">// true by default, setting to false disables the automatic use of the next 4 modifiers.</span>
     .navigationViewThemed(<span class="pl-c1">true</span>) 
+    <span class="pl-c">// Color of selected NavigationView item icon. Defaults to your accent color.</span>
     .navigationViewSelectedIcon(color)
+    <span class="pl-c">// Color of selected NavigationView item text. Defaults to your accent color.</span>
     .navigationViewSelectedText(color)
+    <span class="pl-c">// Color of non-selected NavigationView item icon. Defaults to Material Design guideline color.</span>
     .navigationViewNormalIcon(color)
+    <span class="pl-c">// Color of non-selected NavigationView item text. Defaults to Material Design guideline color.</span>
     .navigationViewNormalText(color)
-    <span class="pl-c">// activity, fragment, or view</span>
+    <span class="pl-c">// Background of selected NavigationView item. Defaults to Material Design guideline color.</span>
+    .navigationViewSelectedBg(color)
+    <span class="pl-c">// application target as parameter, accepts different parameter types/counts</span>
     .apply(<span class="pl-v">this</span>);</pre></div>
 
 <p>There's also color resource and color attribute variations of the color modifiers. For an example: 
@@ -245,18 +268,24 @@ in your Configuration (if you don't want to use separate keys for different scre
         <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>RED</span>;
     }
 
+    <span class="pl-k">@Config</span><span class="pl-k">.</span><span class="pl-smi">LightStatusBarMode</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getLightStatusBarMode</span>() {
+        <span class="pl-k">return</span> <span class="pl-smi">Config</span><span class="pl-c1"><span class="pl-k">.</span>LIGHT_STATUS_BAR_AUTO</span>;
+    }
+
     <span class="pl-k">@ColorInt</span>
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getTaskDescriptionColor</span>() {
         <span class="pl-c">// Task description is the color of your Activity's entry in Android's recents screen</span>
-        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>BLUE</span>;
+        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>GREEN</span>;
     }
 
     <span class="pl-k">@ColorInt</span>
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">int</span> <span class="pl-en">getNavigationBarColor</span>() {
         <span class="pl-c">// Navigation bar is usually either black, or equal to the primary theme colro</span>
-        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>GREEN</span>;
+        <span class="pl-k">return</span> <span class="pl-smi">Color</span><span class="pl-c1"><span class="pl-k">.</span>BLUE</span>;
     }
 }</pre></div>
 
@@ -407,11 +436,9 @@ One that accepts a config key, one that doesn't. <code>ATE.config(Context, Strin
 <p>ATE will automatically theme your toolbars or support action bars (if you use <code>ATEActivity</code> <em>or</em> follow
 the directions in <a href="https://github.com/afollestad/app-theme-engine#custom-activities">Custom Activities</a>). </p>
 
-<p><em>If the toolbar background is light</em>: the navigation icon (e.g. home up or drawer icon) will be tinted black,
-the title text color will be black, the menu icons will be tinted black, and the overflow button will be tinted black.</p>
-
-<p><em>If the toolbar background is dark</em>: the navigation icon (e.g. home up or drawer icon) will be tinted white,
-the title text color will be white, the menu icons will be tinted white, and the overflow button will be tinted white. </p>
+<p>If <code>lightToolbarMode</code> is set to <code>Config.LIGHT_TOOLBAR_ON</code>, or if it's set to <em>auto</em> and the toolbar 
+background is light: the navigation icon (e.g. back or drawer), title, and menu icons will be tinted 
+black. Otherwise they will be white as normal. </p>
 
 <p>ATE will also automatically theme widgets in your overflow menu, such as checkboxes and radio buttons.</p>
 
@@ -496,16 +523,18 @@ the title text color will be white, the menu icons will be tinted white, and the
 }</pre></div>
 
 <h4>
-<a id="navigation-drawers" class="anchor" href="#navigation-drawers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Navigation Drawers</h4>
+<a id="drawerlayout-and-navigationviews" class="anchor" href="#drawerlayout-and-navigationviews" aria-hidden="true"><span class="octicon octicon-link"></span></a>DrawerLayout and NavigationViews</h4>
 
 <p>ATE will automatically adapt when your Activity has a <code>DrawerLayout</code> at its root. When <code>coloredStatusBar()</code> 
 is set to true, the primary dark theme color will be applied to the <code>DrawerLayout</code> rather than directly to 
 the Window status bar. Thus, the status bar will be transparent when the drawer is open, and your theme
 color when it's closed. You don't have to manually do anything.</p>
 
-<p>If you use <code>NavigationView</code> from the design support library, ATE will by default theme it. There are 
-navigation view theming configuration methods discussed in the next section. If your drawer uses a <code>Fragment</code>
-or plain <code>ListView</code>/<code>RecyclerView</code>, you have to do what's discussed in the previous section.</p>
+<hr>
+
+<p>If you use <code>NavigationView</code> from the Design Support Library, ATE will by default theme it. There are 
+NavigationView theming configuration methods discussed in the <a href="https://github.com/afollestad/app-theme-engine#modifiers">Modifiers</a> 
+section. But the default values match the <a href="https://www.google.com/design/spec/patterns/navigation-drawer.html">Material Design Guidelines</a>.</p>
 
 <h4>
 <a id="task-description-recents" class="anchor" href="#task-description-recents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Task Description (Recents)</h4>
@@ -515,6 +544,19 @@ be themed to your primary color automatically.</p>
 
 <p>There is however an <code>ATETaskDescriptionCustomizer</code> that's discussed in the <a href="https://github.com/afollestad/app-theme-engine#customizers">Customizers</a>
  section.</p>
+
+<h4>
+<a id="tablayouts" class="anchor" href="#tablayouts" aria-hidden="true"><span class="octicon octicon-link"></span></a>TabLayouts</h4>
+
+<p>ATE will automatically theme your <code>TabLayout</code>'s. By default, it will make the selected tab indicator
+and tab text white if your TabLayout background is dark. If the TabLayout background is light, it will 
+make the indicator and text black. </p>
+
+<p>If you wrap your <code>TabLayout</code> with an <code>AppBarLayout</code> and set a background to the <code>AppBarLayout</code>, ATE 
+will base the default tab indicator/text colors on its background instead.</p>
+
+<p>However, there are tag values you can set to easily modify these colors. They are discussed in 
+<a href="https://github.com/afollestad/app-theme-engine#tablayouts-continued">TabLayouts - Continued</a>.</p>
 
 <hr>
 
@@ -700,6 +742,52 @@ be themed to your primary color automatically.</p>
 <li>
 <code>bg_tint_text_secondary_inverse_selector_darker</code> - tints the view background with a inverse secondary text color selector, which is lighter when pressed.</li>
 </ol>
+
+<h4>
+<a id="tablayouts---continued" class="anchor" href="#tablayouts---continued" aria-hidden="true"><span class="octicon octicon-link"></span></a>TabLayouts - Continued</h4>
+
+<p>There are tag values to modify the color of TabLayout tab text:</p>
+
+<ol>
+<li>
+<code>tab_text_primary_color</code> - uses the primary color for for the tab text color.</li>
+<li>
+<code>tab_text_primary_color_dark</code> - uses the primary dark color for for the tab text color.</li>
+<li>
+<code>tab_text_accent_color</code> - uses the accent color for for the tab text color.</li>
+<li>
+<code>tab_text_primary</code> - uses the primary text color for for the tab text color.</li>
+<li>
+<code>tab_text_primary_inverse</code> - uses the inverse primary text color for for the tab text color.</li>
+<li>
+<code>tab_text_secondary</code> - uses the secondary text color for for the tab text color.</li>
+<li>
+<code>tab_text_secondary_inverse</code> - uses the inverse secondary color for for the tab text color.</li>
+</ol>
+
+<p><strong>Note</strong> that the selected tab text will be fully opaque; non-selected tabs will have 25% transparency in 
+their text color.</p>
+
+<hr>
+
+<ol>
+<li>
+<code>tab_indicator_primary_color</code> - uses the primary color for for the selected tab indicator color.</li>
+<li>
+<code>tab_indicator_primary_color_dark</code> - uses the primary dark color for for the selected tab indicator color.</li>
+<li>
+<code>tab_indicator_accent_color</code> - uses the accent color for for the selected tab indicator color.</li>
+<li>
+<code>tab_indicator_text_primary</code> - uses the primary text color for for the selected tab indicator color.</li>
+<li>
+<code>tab_indicator_text_primary_inverse</code> - uses the inverse primary text color for for the selected tab indicator color.</li>
+<li>
+<code>tab_indicator_text_secondary</code> - uses the secondary text color for for the selected tab indicator color.</li>
+<li>
+<code>tab_indicator_text_secondary_inverse</code> - uses the inverse secondary text color for for the selected tab indicator color.</li>
+</ol>
+
+<p><strong>Note</strong> that the indicator color is used for the color of tab icons, if they are used.</p>
 
 <hr>
 
